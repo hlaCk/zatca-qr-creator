@@ -454,7 +454,7 @@
                 <small id="vat_amountHelp" class="form-text text-muted">قيمة الضريبة</small>
             </div>
 
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="submit" class="btn btn-primary">Create - إنشاء</button>
         </form>
 
 
