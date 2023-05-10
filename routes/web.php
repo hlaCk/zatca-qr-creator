@@ -13,12 +13,23 @@ use Intervention\Image\ImageManagerStatic as Image;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+\Carbon\Carbon::setLocale('en_US');
+function toDate($d) {
+    $s= \Carbon\Carbon::parse($d)
+    ->setHour(24)
+    // ->addHours(3)
+    ->setMinute(random_int(1,59))
+    ->setSecond(random_int(1,59))
+    // ->settimezone("Asia/Riyadh")
+    ->format('Y-m-d\TH:i:s\Z')    
+    ;
+    return $s;
+}
 Route::post('/show', function (\Illuminate\Http\Request $request) {
     $value = \MPhpMaster\ZATCA\TagBag::make()
         ->setCompany($request->company)
         ->setVatId($request->vat_id)
-        ->setInvoiceDate($request->invoice_date)
+        ->setInvoiceDate(toDate($request->invoice_date))
         ->setInvoiceTotalAmount($request->invoice_total_amount)
         ->setVatAmount($request->vat_amount)
         ->toImage();
@@ -57,7 +68,7 @@ Route::get('/download/{data}', function (
     $value = \MPhpMaster\ZATCA\TagBag::make()
         ->setCompany($request->company)
         ->setVatId($request->vat_id)
-        ->setInvoiceDate($request->invoice_date)
+        ->setInvoiceDate(toDate($request->invoice_date))
         ->setInvoiceTotalAmount($request->invoice_total_amount)
         ->setVatAmount($request->vat_amount)
         ->toImage();
@@ -88,7 +99,7 @@ Route::get('/{data?}', function (
         $data['image'] = \MPhpMaster\ZATCA\TagBag::make()
             ->setCompany($request->company)
             ->setVatId($request->vat_id)
-            ->setInvoiceDate($request->invoice_date)
+            ->setInvoiceDate(toDate($request->invoice_date))
             ->setInvoiceTotalAmount($request->invoice_total_amount)
             ->setVatAmount($request->vat_amount)
             ->toImage();

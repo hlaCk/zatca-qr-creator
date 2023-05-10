@@ -9,10 +9,17 @@
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
     <!-- Styles -->
     <style>
         /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
@@ -407,8 +414,9 @@
     </style>
 </head>
 
-<body class="antialiased">
-    <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
+<body class="antialiased" onload="fixA(0)">
+    <div
+        class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
 
         <form method="post" action="show">
             @csrf
@@ -430,27 +438,39 @@
 
             <div class="form-group">
                 <label for="company">Company</label>
-                <input type="text" class="form-control" name="company" id="company" aria-describedby="companyHelp" placeholder="Enter company" value="{{$company??''}}">
+                <input required type="text" class="form-control" name="company" id="company" aria-describedby="companyHelp"
+                    placeholder="Enter company" value="{{$company??''}}">
                 <small id="companyHelp" class="form-text text-muted">اسم الشركة</small>
             </div>
             <div class="form-group">
                 <label for="vat_id">VatId</label>
-                <input type="text" class="form-control" name="vat_id" id="vat_id" aria-describedby="vat_idHelp" placeholder="Enter vat id" value="{{$vat_id??''}}">
+                <input required type="number" class="form-control" name="vat_id" id="vat_id" aria-describedby="vat_idHelp"
+                    placeholder="Enter vat id" value="{{$vat_id??''}}">
                 <small id="vat_idHelp" class="form-text text-muted">الرقم الضريبي</small>
             </div>
             <div class="form-group">
                 <label for="invoice_date">Invoice Date</label>
-                <input type="text" class="form-control" name="invoice_date" id="invoice_date" aria-describedby="invoice_dateHelp" placeholder="Enter invoice_date" value="{{$invoice_date??''}}">
+                <input required type="date" class="form-control" name="invoice_date" id="invoice_date"
+                    aria-describedby="invoice_dateHelp" placeholder="Enter invoice_date" value="{{$invoice_date??''}}">
                 <small id="invoice_dateHelp" class="form-text text-muted">تاريخ الفاتورة</small>
             </div>
             <div class="form-group">
+                <label for="total">Invoice Total Amount without vat</label>
+                <input required type="number" step="0.01" min="0.01" onfocus="this.focus(); this.select()" class="form-control" name="total" onchange="fixA(this.value)" onkeyup="amountChange(Number(this.value))"
+                    id="total" aria-describedby="totalHelp" placeholder="Enter total" value="">
+                <small id="totalHelp" class="form-text text-muted">اجمالي الفاتورة بدون الضريبة</small>
+            </div>
+            <div class="form-group">
                 <label for="invoice_total_amount">Invoice Total Amount</label>
-                <input type="text" class="form-control" name="invoice_total_amount" id="invoice_total_amount" aria-describedby="invoice_total_amountHelp" placeholder="Enter invoice_total_amount" value="{{$invoice_total_amount??''}}">
+                <input required type="text" readonly class="form-control" name="invoice_total_amount" id="invoice_total_amount"
+                    aria-describedby="invoice_total_amountHelp" placeholder="Enter invoice_total_amount"
+                    value="{{$invoice_total_amount??''}}">
                 <small id="invoice_total_amountHelp" class="form-text text-muted">اجمالي الفاتورة</small>
             </div>
             <div class="form-group">
                 <label for="vat_amount">Vat Amount</label>
-                <input type="text" class="form-control" name="vat_amount" id="vat_amount" aria-describedby="vat_amountHelp" placeholder="Enter vat_amount" value="{{$vat_amount??''}}">
+                <input required type="text" readonly class="form-control" name="vat_amount" id="vat_amount"
+                    aria-describedby="vat_amountHelp" placeholder="Enter vat_amount" value="{{$vat_amount??''}}">
                 <small id="vat_amountHelp" class="form-text text-muted">قيمة الضريبة</small>
             </div>
 
@@ -459,6 +479,20 @@
 
 
     </div>
+
+
+    <script>
+        function fixA(e) {
+            document.getElementById('total').value = Number(e);
+
+        }
+        function amountChange(e) {
+            e = parseFloat(e);
+            let t = (e / 100) * 15;
+            document.getElementById('invoice_total_amount').value = parseFloat(e + t).toFixed(2);
+            document.getElementById('vat_amount').value = parseFloat(t).toFixed(2);
+        }
+    </script>
 </body>
 
 </html>
