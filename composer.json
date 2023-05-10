@@ -1,8 +1,8 @@
 {
-    "name": "laravel/laravel",
+    "name": "hlack/zatca-qr-creator",
     "type": "project",
     "description": "ZATCA Qr Creator by mPhpMaster",
-    "keywords": ["framework", "laravel"],
+    "keywords": ["zatca", "qr"],
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",

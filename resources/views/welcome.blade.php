@@ -422,8 +422,8 @@
         'invoice_total_amount',
         'vat_amount',
     ])))])}}" target="_blank">
-                <img src="{{$image}}" class="form-control" id="LastQr" alt="Last ZATCA QRCode" />
-    </a>
+                    <img src="{{$image}}" class="form-control" id="LastQr" alt="Last ZATCA QRCode" />
+                </a>
                 <small id="LastQr" class="form-text text-muted">اخر كيو ار</small>
             </div>
             @endif
