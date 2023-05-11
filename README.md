@@ -1,5 +1,7 @@
 ## ZATCA Qr Creator by mPhpMaster
 
+![preview.png](preview.png)
+
 ```shell
 git clone https://github.com/hlaCk/zatca-qr-creator.git zatca-qr-creator
 cd zatca-qr-creator
