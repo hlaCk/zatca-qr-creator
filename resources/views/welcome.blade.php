@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,16 +9,16 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
     <!-- Styles -->
     <style>
         /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
@@ -413,86 +412,153 @@
         }
     </style>
 </head>
+<body class="antialiased bg-gray-100 dark:bg-gray-900 justify-center"
+      onload="fixTotal('{{$total??''}}' || 0); document.getElementById('vat_id').oninput(); let _e = @error('vat_id') document.getElementById('vat_id') @else document.getElementById('company') @enderror ; _e.focus(); _e.select();">
 
-<body class="antialiased" onload="fixA(0)">
+@if(isset($showForm))
     <div
-        class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
+        class="items-top justify-center relative sm:items-center w-75 m-auto">
 
-        <form method="post" action="show">
-            @csrf
-            @if(($image ?? null))
-            <div class="form-group text-center">
-                <label for="LastQr">Last Qr</label>
-                <a href="{{route('download', ['data'=>bin2hex(json_encode(compact([
-        'company',
-        'vat_id',
-        'invoice_date',
-        'invoice_total_amount',
-        'vat_amount',
-    ])))])}}" target="_blank">
-                    <img src="{{$image}}" class="form-control" id="LastQr" alt="Last ZATCA QRCode" />
-                </a>
-                <small id="LastQr" class="form-text text-muted">اخر كيو ار</small>
-            </div>
-            @endif
+        <div class="form-group text-center">
+            <a href="{{$download}}" target="_blank" title="Download QR Image">
+                <img src="{{$showForm}}" alt="ZATCA QRCode m-auto"/>
+            </a>
 
-            <div class="form-group">
-                <label for="company">Company</label>
-                <input required type="text" class="form-control" name="company" id="company" aria-describedby="companyHelp"
-                    placeholder="Enter company" value="{{$company??''}}">
-                <small id="companyHelp" class="form-text text-muted">اسم الشركة</small>
+            <div class="btn-group-vertical">
+                <a href="{{$download}}" target="_blank" title="Download QR Image" class="btn btn-lg btn-success m-1">Download - تحميل</a>
+                @if($hasData ?? '')
+                    <br>
+                    <button type="button" class="btn btn-lg btn-dark m-1" onclick="resetForm(event)">New - جديد</button>
+                @endif
             </div>
-            <div class="form-group">
-                <label for="vat_id">VatId</label>
-                <input required type="number" class="form-control" name="vat_id" id="vat_id" aria-describedby="vat_idHelp"
-                    placeholder="Enter vat id" value="{{$vat_id??''}}">
-                <small id="vat_idHelp" class="form-text text-muted">الرقم الضريبي</small>
-            </div>
-            <div class="form-group">
-                <label for="invoice_date">Invoice Date</label>
-                <input required type="date" class="form-control" name="invoice_date" id="invoice_date"
-                    aria-describedby="invoice_dateHelp" placeholder="Enter invoice_date" value="{{$invoice_date??''}}">
-                <small id="invoice_dateHelp" class="form-text text-muted">تاريخ الفاتورة</small>
-            </div>
-            <div class="form-group">
-                <label for="total">Invoice Total Amount without vat</label>
-                <input required type="number" step="0.01" min="0.01" onfocus="this.focus(); this.select()" class="form-control" name="total" onchange="fixA(this.value)" onkeyup="amountChange(Number(this.value))"
-                    id="total" aria-describedby="totalHelp" placeholder="Enter total" value="">
-                <small id="totalHelp" class="form-text text-muted">اجمالي الفاتورة بدون الضريبة</small>
-            </div>
-            <div class="form-group">
-                <label for="invoice_total_amount">Invoice Total Amount</label>
-                <input required type="text" readonly class="form-control" name="invoice_total_amount" id="invoice_total_amount"
-                    aria-describedby="invoice_total_amountHelp" placeholder="Enter invoice_total_amount"
-                    value="{{$invoice_total_amount??''}}">
-                <small id="invoice_total_amountHelp" class="form-text text-muted">اجمالي الفاتورة</small>
-            </div>
-            <div class="form-group">
-                <label for="vat_amount">Vat Amount</label>
-                <input required type="text" readonly class="form-control" name="vat_amount" id="vat_amount"
-                    aria-describedby="vat_amountHelp" placeholder="Enter vat_amount" value="{{$vat_amount??''}}">
-                <small id="vat_amountHelp" class="form-text text-muted">قيمة الضريبة</small>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Create - إنشاء</button>
-        </form>
-
+        </div>
 
     </div>
+@endif
+
+<div
+    class="relative flex items-top justify-center sm:items-center py-4 sm:pt-0">
+    <form method="post" action="{{route('home', ['data'=>$hash ?? $data ?? ''])}}" class="w-75">
+
+        @if(count($errors) > 0 )
+            <div class="alert alert-danger alert-dismissible fade show w-100" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <ul class="p-0 m-0" style="list-style: none;">
+                    @foreach($errors->all() as $error)
+                        <li class="text-center">{{$error}}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <br/>
+        @endif
+
+        @csrf
+
+        <div class="form-group">
+            <label for="company">Company</label>
+            <input required type="text" class="form-control" name="company" id="company" aria-describedby="companyHelp"
+                   placeholder="Enter Company" value="{{$company??''}}">
+            <small id="companyHelp" class="form-text text-muted text-right">اسم الشركة</small>
+        </div>
+        <div class="form-group">
+            <label for="vat_id">
+                Vat Number
+                |
+                <span class="text-danger text-sm countChar">0</span>
+                <span class="text-sm">Char</span>
+            </label>
+            <input required type="number" class="form-control @error('vat_id') alert-danger border-danger @enderror" name="vat_id" id="vat_id" aria-describedby="vat_idHelp"
+                   placeholder="Enter Vat Number" value="{{$vat_id??''}}" oninput="countChars(this.value, document.querySelectorAll('.countChar'))">
+            <small id="vat_idHelp" class="form-text text-muted text-right">
+                الرقم الضريبي
+                |
+                <span class="text-danger text-sm countChar">0</span>
+                <span class="text-sm">حرف</span>
+            </small>
+        </div>
+        <div class="form-group">
+            <label for="invoice_date">Invoice Date</label>
+            <input
+                required
+                type="date"
+                class="form-control"
+                name="invoice_date"
+                id="invoice_date"
+                aria-describedby="invoice_dateHelp"
+                placeholder="Enter Invoice Date"
+                value="{{$invoice_date??today()->format("Y-m-d")}}"
+            >
+            <small id="invoice_dateHelp" class="form-text text-muted text-right">تاريخ الفاتورة</small>
+        </div>
+        <div class="form-group">
+            <label for="total">Total Without Vat</label>
+            <input
+                required
+                type="number"
+                step="0.01"
+                min="0.01"
+                onfocus="this.focus(); this.select()"
+                class="form-control"
+                name="total"
+                onchange="calcVat(this.value)"
+                onkeyup="calcVat(this.value)"
+                id="total"
+                aria-describedby="totalHelp"
+                placeholder="Enter Invoice Total Without Vat Amount"
+                value="{{$total??0}}"
+            >
+            <small id="totalHelp" class="form-text text-muted text-right">اجمالي الفاتورة بدون الضريبة</small>
+        </div>
+        <div class="form-group">
+            <label for="invoice_total_amount">Total Amount</label>
+            <input required type="number" readonly class="form-control" name="invoice_total_amount" id="invoice_total_amount"
+                   aria-describedby="invoice_total_amountHelp" placeholder="Invoice Total Amount"
+                   value="{{$invoice_total_amount??0}}">
+            <small id="invoice_total_amountHelp" class="form-text text-muted text-right">اجمالي الفاتورة</small>
+        </div>
+        <div class="form-group">
+            <label for="vat_amount">Vat Amount</label>
+            <input required type="number" readonly class="form-control" name="vat_amount" id="vat_amount"
+                   aria-describedby="vat_amountHelp" placeholder="Vat Amount" value="{{$vat_amount??0}}">
+            <small id="vat_amountHelp" class="form-text text-muted text-right">قيمة الضريبة</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Generate - إنشاء</button>
+    </form>
 
 
-    <script>
-        function fixA(e) {
-            document.getElementById('total').value = Number(e);
+</div>
 
+<script>
+    function fixTotal(n) {
+        document.getElementById('total').value = Number(n);
+    }
+
+    function calcVat(n) {
+        n = parseFloat(n);
+        let t = (n / 100) * 15;
+
+        document.getElementById('invoice_total_amount').value = parseFloat(n + t).toFixed(2);
+        document.getElementById('vat_amount').value = parseFloat(t).toFixed(2);
+    }
+
+    function resetForm(event) {
+        event.preventDefault();
+        if (confirm("Are you sure?\nهل انت متاكد؟")) {
+            location.href = '{{route('home')}}';
         }
-        function amountChange(e) {
-            e = parseFloat(e);
-            let t = (e / 100) * 15;
-            document.getElementById('invoice_total_amount').value = parseFloat(e + t).toFixed(2);
-            document.getElementById('vat_amount').value = parseFloat(t).toFixed(2);
-        }
-    </script>
+    }
+
+    function countChars(value, elms) {
+        let len = value.length;
+        Array.from(elms).forEach(x=> {
+            x.innerText = len;
+            x.classList.remove('text-muted', 'text-danger');
+            x.classList.add(len != 15 && 'text-danger' || 'text-muted');
+        });
+    }
+</script>
 </body>
-
 </html>
