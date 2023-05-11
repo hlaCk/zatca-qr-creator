@@ -118,7 +118,6 @@ Route::any('/{data?}', function(
             $data[ 'hasData' ] = $hasData;
             $request = (object) $data;
         } catch(Exception $exception) {
-            dd($exception->getMessage(), $data, $hasData);
             if( $hasData ) {
                 return redirect()->route('home');
             }
@@ -158,11 +157,6 @@ Route::any('/{data?}', function(
 
         return view('welcome', $view);
     } catch(Exception $exception) {
-        dd(
-            __LINE__,
-            $exception->getMessage()
-        );
-
         return redirect()->route('home');
     }
 })
