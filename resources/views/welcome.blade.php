@@ -480,15 +480,16 @@
         </div>
         <div class="form-group">
             <label for="invoice_date">Invoice Date</label>
+            <span class="text-secondary font-italic" style="font-size: xx-small;" title="{{$invoice_date??null}} {{$invoice_time??null}}">{{$invoice_date??null}} {{$invoice_time??null}}</span>
             <input
                 required
-                type="date"
+                type="datetime-local"
                 class="form-control"
                 name="invoice_date"
                 id="invoice_date"
                 aria-describedby="invoice_dateHelp"
                 placeholder="Enter Invoice Date"
-                value="{{$invoice_date??today()->format("Y-m-d")}}"
+                value="{{ parseInvoiceDateToInput($invoice_date ?? null, $invoice_time ?? null) }}"
             >
             <small id="invoice_dateHelp" class="form-text text-muted text-right">تاريخ الفاتورة</small>
         </div>
